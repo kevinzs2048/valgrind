@@ -2775,6 +2775,8 @@ typedef
       Ifk_flush = 0,        /* normal CLFLUSH */
       Ifk_flushopt,         /* CLFLUSHOPT */
       Ifk_clwb,             /* CLWB */
+      Ifk_dccvap,           /* DC CVAP in Arm64 */
+      Ifk_dccvac,           /* DC CVAC in Arm64 */
 
    } IRFlushKind;
 

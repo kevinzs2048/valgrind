@@ -4371,6 +4371,15 @@ static void iselStmt ( ISelEnv* env, IRStmt* stmt )
       goto stmt_fail;
    }
 
+   /* --------- FLUSH --------- */
+   case Ist_Flush: {
+       IRType    tya   = typeOfIRExpr(env->type_env, stmt->Ist.Flush.addr);
+
+       if (tya != Ity_I64)
+           goto stmt_fail;
+       return;
+   }
+
    default: break;
    }
   stmt_fail:

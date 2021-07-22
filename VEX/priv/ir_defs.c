@@ -2102,6 +2102,10 @@ void ppIRFlushEvent ( IRFlushKind flush_kind, IRExpr* e )
          vex_printf("FLUSHOPT("); break;
       case Ifk_clwb:
          vex_printf("CLWB("); break;
+      case Ifk_dccvap:
+         vex_printf("DCCVAP("); break;
+      case Ifk_dccvac:
+          vex_printf("DCCVAC("); break;
       default:
          vpanic("ppIRFlushEvent");
    }

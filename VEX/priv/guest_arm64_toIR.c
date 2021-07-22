@@ -7465,9 +7465,13 @@ Bool dis_ARM64_branch_etc(/*MB_OUT*/DisResult* dres, UInt insn,
    /* ------------------ DC_CVAU ------------------ */
    /* D5 0B 7B 001 Rt  dc cvau, rT
       D5 0B 7E 001 Rt  dc civac, rT
+      D5 0B 7A 001 Rt  dc cvac, rT
+      D5 0B 7C 001 Rt  dc cvap, rT
    */
    if (   (INSN(31,0) & 0xFFFFFFE0) == 0xD50B7B20
-       || (INSN(31,0) & 0xFFFFFFE0) == 0xD50B7E20) {
+       || (INSN(31,0) & 0xFFFFFFE0) == 0xD50B7E20
+       || ((INSN(31,0) & 0xFFFFFFE0) == 0xD50B7A20)
+       || ((INSN(31,0) & 0xFFFFFFE0) == 0xD50B7C20)) {
       /* Exactly the same scheme as for IC IVAU, except we observe the
          dMinLine size, and request an Ijk_FlushDCache instead of
          Ijk_InvalICache. */
@@ -7478,10 +7482,17 @@ Bool dis_ARM64_branch_etc(/*MB_OUT*/DisResult* dres, UInt insn,
          containing block. */
       UInt   tt      = INSN(4,0);
       ULong  lineszB = 1ULL << archinfo->arm64_dMinLine_lg2_szB;
+      UInt opc = INSN(10,8);
       IRTemp addr    = newTemp(Ity_I64);
       assign( addr, binop( Iop_And64,
                            getIReg64orZR(tt),
                            mkU64(~(lineszB - 1))) );
+      if ((INSN(31,0) & 0xFFFFFFE0) == 0xD50B7C20) {
+        stmt( IRStmt_Flush(mkexpr(addr), Ifk_dccvap) );
+      }
+      if ((INSN(31,0) & 0xFFFFFFE0) == 0xD50B7A20) {
+        stmt( IRStmt_Flush(mkexpr(addr), Ifk_dccvac) );
+      }
       /* Set the flush range, request exit-and-flush, with
          continuation at the next instruction. */
       stmt(IRStmt_Put(OFFB_CMSTART, mkexpr(addr)));
@@ -7491,7 +7502,8 @@ Bool dis_ARM64_branch_etc(/*MB_OUT*/DisResult* dres, UInt insn,
       putPC(mkU64( guest_PC_curr_instr + 4 ));
       dres->whatNext    = Dis_StopHere;
       dres->jk_StopHere = Ijk_FlushDCache;
-      DIP("dc cvau, %s\n", nameIReg64orZR(tt));
+      const HChar* opNames[4] = { "cvac", "cvau", "cvap", "civac" };
+      DIP("dc %s, %s\n", opNames[opc - 2], nameIReg64orZR(tt));
       return True;
    }
 
