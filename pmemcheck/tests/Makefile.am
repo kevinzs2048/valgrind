@@ -15,14 +15,15 @@ include $(top_srcdir)/Makefile.tool-tests.am
 
 SUBDIRS = . address_specific logging_related small_stacktrace
 
+if VGCONF_ARCHS_INCLUDE_AMD64
+SUBDIRS += amd64
+endif
+
 dist_noinst_SCRIPTS = \
 	filter_stderr
 
 
 noinst_HEADERS = common.h
-
-# to trigger 64-bit float store
-floats_CFLAGS = -mno-sse2 -g -O3
 
 EXTRA_DIST = \
 	const_store.stderr.exp const_store.vgtest \
@@ -30,12 +31,9 @@ EXTRA_DIST = \
 	state_machine.stderr.exp state_machine.vgtest \
 	state_machine2.stderr.exp state_machine2.vgtest \
 	multiple_stores.stderr.exp multiple_stores.vgtest \
-	sse_stores.stderr.exp sse_stores.vgtest \
 	cas.stderr.exp cas.vgtest \
 	flush_check.stderr.exp flush_check.vgtest \
-	isa_check.stderr.exp isa_check.vgtest \
 	state_no_flush_align.stderr.exp state_no_flush_align.vgtest \
-	nt_stores.stderr.exp nt_stores.vgtest \
 	set_clean.stderr.exp set_clean.vgtest \
 	missed_flush.stderr.exp missed_flush.vgtest\
 	trans_impl.stderr.exp trans_impl.vgtest \
@@ -48,8 +46,7 @@ EXTRA_DIST = \
 	trans_cache_overl.stderr.exp trans_cache_overl.vgtest \
 	trans_cache_flush.stderr.exp trans_cache_flush.vgtest \
 	store_merge.stderr.exp store_merge.vgtest \
-	store_split.stderr.exp store_split.vgtest \
-	floats.stderr.exp floats.vgtest
+	store_split.stderr.exp store_split.vgtest
 
 check_PROGRAMS = \
 	const_store \
@@ -57,12 +54,9 @@ check_PROGRAMS = \
 	state_machine \
 	state_machine2 \
 	multiple_stores \
-	sse_stores \
 	cas \
 	flush_check \
-	isa_check\
 	state_no_flush_align \
-	nt_stores \
 	set_clean \
 	missed_flush \
 	trans_impl \
@@ -75,5 +69,4 @@ check_PROGRAMS = \
 	trans_cache_overl \
 	trans_cache_flush \
 	store_merge \
-	store_split \
-	floats
+	store_split

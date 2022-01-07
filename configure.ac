@@ -4994,6 +4994,7 @@ AC_CONFIG_FILES([
    pmemcheck/Makefile
    pmemcheck/tests/Makefile
    pmemcheck/tests/address_specific/Makefile
+   pmemcheck/tests/amd64/Makefile
    pmemcheck/tests/logging_related/Makefile
    pmemcheck/tests/small_stacktrace/Makefile
    solaris/Makefile
